@@ -15,7 +15,7 @@ listagem de transcrições anteriores e visualização rich text.
 - Logging estruturado (stdout + `app.log` com rotação)
 
 ## Estrutura do projeto
-
+```
 .
 ├── app/
 │   ├── __init__.py            # Factory: create_app() + setup_logging()
@@ -40,7 +40,7 @@ listagem de transcrições anteriores e visualização rich text.
 ├── requirements.txt
 ├── run.py                     # Entrypoint
 └── README.md
-
+```
 
 ## Pré-requisitos
 
@@ -79,6 +79,7 @@ FLASK_HOST=0.0.0.0
 # HTTP_PROXY=http://usuario:senha@host:porta
 
 `python run.py`
+```
 
 # API interna
 
