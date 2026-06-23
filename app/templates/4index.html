@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .upload-form {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .file-input {
+            margin-bottom: 10px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .submit-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .download-button {
+            display: inline-block;
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .download-button:hover {
+            background-color: #007399;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        #transcriptionResult {
+            white-space: pre-wrap;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Transcription App</h1>
+        
+        <div class="upload-form">
+            <form id="uploadForm">
+                <div class="file-input">
+                    <input type="file" id="audioFile" accept=".wav,.mp3,.ogg,.m4a,.flac,.mp4,.mpeg,.mpga, .opus" required>
+                </div>
+                <button type="submit" class="submit-button" id="submitButton">Transcribe Audio</button>
+            </form>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <p>Processing your audio file... Please wait...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="result-container" id="resultContainer">
+            <h2>Transcription Result:</h2>
+            <div id="transcriptionResult"></div>
+            <div id="downloadContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('audioFile');
+            const submitButton = document.getElementById('submitButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultContainer = document.getElementById('resultContainer');
+            const transcriptionResult = document.getElementById('transcriptionResult');
+            const downloadContainer = document.getElementById('downloadContainer');
+
+            // Clear previous results and errors
+            errorMessage.textContent = '';
+            transcriptionResult.textContent = '';
+            downloadContainer.innerHTML = '';
+            resultContainer.style.display = 'none';
+
+            if (!fileInput.files.length) {
+                errorMessage.textContent = 'Please select a file.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                // Show loading state
+                submitButton.disabled = true;
+                loadingIndicator.style.display = 'block';
+
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Display results
+                resultContainer.style.display = 'block';
+                transcriptionResult.textContent = data.transcript;
+
+                // Add download button if filename is provided
+                if (data.filename) {
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = `/download/${data.filename}`;
+                    downloadLink.textContent = 'Download Transcription';
+                    downloadLink.className = 'download-button';
+                    downloadContainer.appendChild(downloadLink);
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message || 'An error occurred during transcription.';
+            } finally {
+                // Reset loading state
+                submitButton.disabled = false;
+                loadingIndicator.style.display = 'none';
+            }
+        });
+
+        // Update submit button state based on file selection
+        document.getElementById('audioFile').addEventListener('change', (e) => {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = !e.target.files.length;
+        });
+    </script>
+</body>
+</html>

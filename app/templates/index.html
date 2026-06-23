@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Transcription App</h1>
+
+        <div class="upload-form">
+            <form id="uploadForm">
+                <div class="file-input">
+                    <input type="file" id="audioFile" accept=".wav,.mp3,.ogg,.m4a,.flac,.mp4,.mpeg,.mpga, .opus" required>
+                </div>
+                <button type="submit" class="submit-button" id="submitButton">Transcribe Audio</button>
+            </form>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <p>Processing your audio file... Please wait...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="result-container" id="resultContainer">
+            <h2>Transcription Result:</h2>
+            <div id="transcriptionResult"></div>
+            <div id="downloadContainer"></div>
+        </div>
+
+        <div class="transcripts-section">
+            <h2>Saved Transcriptions</h2>
+            <div class="transcript-list" id="transcriptList">
+                <div class="loading-transcripts" id="loadingTranscripts">Loading saved transcriptions...</div>
+                <div class="no-transcripts" id="noTranscripts" style="display:none;">No saved transcriptions found.</div>
+            </div>
+
+            <div class="viewer-container" id="viewerContainer">
+                <div class="viewer-header">
+                    <h3 id="viewerFilename"></h3>
+                    <button class="viewer-close" id="viewerClose" title="Close">&times;</button>
+                </div>
+                <div class="viewer-content" id="viewerContent"></div>
+                <div class="viewer-actions">
+                    <a class="download-button" id="viewerDownload" href="#" download>Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

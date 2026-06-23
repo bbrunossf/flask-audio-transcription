@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription</title>
+    <style>
+        .notebook {
+            display: flex;
+        }
+        .left-page, .right-page {
+            flex: 1;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .transcript, .briefing, #user-notes {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+        #api-key-input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #status-message {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="notebook">
+        <div class="left-page">
+            <h1>Audio Transcription</h1>
+            <input type="text" id="api-key-input" placeholder="Enter your AssemblyAI API key">
+            <div id="upload-area" class="upload-area">
+                Drag & Drop or Click to Upload Audio File
+                <input type="file" id="file-input" style="display: none;">
+            </div>
+            <div class="spinner" id="spinner"></div>
+            <div id="status-message"></div>
+            <div id="transcript" class="transcript" contenteditable="true"></div>
+            <div id="briefing" class="briefing"></div>
+            <h2>Uploaded Files</h2>
+            <ul id="file-list"></ul>
+        </div>
+        <div class="right-page">
+            <h1>Your Notes</h1>
+            <div id="user-notes" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const transcript = document.getElementById('transcript');
+        const fileList = document.getElementById('file-list');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const spinner = document.getElementById('spinner');
+        const statusMessage = document.getElementById('status-message');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => e.preventDefault());
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            e.preventDefault();
+            handleFiles(e.dataTransfer.files);
+        }
+
+        function handleFileSelect(e) {
+            handleFiles(e.target.files);
+        }
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file) {
+                uploadFile(file);
+            }
+        }
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('api_key', apiKeyInput.value);
+
+            spinner.style.display = 'block';
+            statusMessage.textContent = 'Uploading file...';
+
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                return new ReadableStream({
+                    start(controller) {
+                        return pump();
+                        function pump() {
+                            return reader.read().then(({ done, value }) => {
+                                if (done) {
+                                    controller.close();
+                                    return;
+                                }
+                                controller.enqueue(value);
+                                return pump();
+                            });
+                        }
+                    }
+                });
+            })
+            .then(stream => new Response(stream))
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    statusMessage.textContent = data.status;
+                    if (data.transcript) {
+                        spinner.style.display = 'none';
+                        transcript.textContent = data.transcript;
+                        const li = document.createElement('li');
+                        li.textContent = file.name;
+                        fileList.appendChild(li);
+                    }
+                } else if (data.error) {
+                    spinner.style.display = 'none';
+                    statusMessage.textContent = `Error: ${data.error}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                spinner.style.display = 'none';
+                statusMessage.textContent = 'An error occurred while processing the file.';
+            });
+        }
+    </script>
+</body>
+</html>

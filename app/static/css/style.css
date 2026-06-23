@@ -1,0 +1,220 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.upload-form {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.file-input {
+    margin-bottom: 10px;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.result-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: none;
+}
+
+.download-button {
+    display: inline-block;
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.download-button:hover {
+    background-color: #007399;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#transcriptionResult {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+/* Transcripts list section */
+.transcripts-section {
+    margin-top: 30px;
+}
+
+.transcripts-section h2 {
+    color: #333;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.transcript-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.transcript-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.transcript-item:hover {
+    background-color: #e8f5e9;
+}
+
+.transcript-item.active {
+    background-color: #c8e6c9;
+    border-left: 4px solid #4CAF50;
+}
+
+.transcript-item:last-child {
+    border-bottom: none;
+}
+
+.transcript-filename {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.transcript-meta {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.transcript-preview {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Rich text viewer */
+.viewer-container {
+    margin-top: 20px;
+    display: none;
+}
+
+.viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.viewer-header h3 {
+    margin: 0;
+    color: #333;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.viewer-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    padding: 0 5px;
+}
+
+.viewer-close:hover {
+    color: #333;
+}
+
+.viewer-content {
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: justify;
+}
+
+.viewer-content p {
+    margin-bottom: 1em;
+}
+
+.viewer-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.no-transcripts {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-style: italic;
+}
+
+.loading-transcripts {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+}
